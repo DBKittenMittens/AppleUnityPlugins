@@ -524,6 +524,12 @@ namespace Apple.Core
                 string path = AssetDatabase.GUIDToAssetPath(libraryAsset);
                 AssetDatabase.DeleteAsset(path);
             }
+            // Ensure the folder exists after deletion
+            if (!Directory.Exists(ApplePlugInSupportPlayModeSupportPath))
+            {
+                Debug.Log($"[Apple Unity Plug-ins] Running in Editor, creating support folder: {ApplePlugInSupportPlayModeSupportPath}");
+                AssetDatabase.CreateFolder(ApplePlugInSupportEditorPath, "PlayModeSupport");
+            }  
             
             string summary = $"[Apple Unity Plug-ins] Synchronizing plug-in libraries for Editor Play Mode support to <b>{ApplePlugInSupportPlayModeSupportPath}</b>\nLibraries copied:";
             bool librariesCopied = false;
