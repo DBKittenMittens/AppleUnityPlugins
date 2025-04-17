@@ -132,7 +132,14 @@ namespace Apple.Core
             {
                 LogDevelopmentMessage("OnPostProcessBuild", "OnProcessEntitlements begin");
 
-                var entitlementsPath = GetEntitlementsPath(buildTarget, generatedProjectPath);
+// MIGHTY_EDIT_START
+                // var entitlementsPath = GetEntitlementsPath(buildTarget, generatedProjectPath);
+                var entitlementsPath = pbxProject.GetEntitlementFilePathForTarget(pbxProject.GetUnityMainTargetGuid());
+                if (string.IsNullOrEmpty(entitlementsPath))
+                {
+                    entitlementsPath = GetEntitlementsPath(buildTarget, generatedProjectPath);
+                }
+// MIGHTY_EDIT_END
                 var entitlements = new PlistDocument();
 
                 if (File.Exists(entitlementsPath))
@@ -174,7 +181,10 @@ namespace Apple.Core
                 {
                     var entitlementsXCodePath = buildTarget == BuildTarget.StandaloneOSX ? $"{Application.productName}/{Application.productName}.entitlements" : $"{Application.productName}.entitlements";
                     var targetGuid = buildTarget == BuildTarget.StandaloneOSX ? pbxProject.TargetGuidByName(Application.productName) : pbxProject.GetUnityMainTargetGuid();
-                    pbxProject.AddBuildProperty(targetGuid, "CODE_SIGN_ENTITLEMENTS", entitlementsXCodePath);
+// MIGHTY_EDIT_START
+                    // pbxProject.AddBuildProperty(targetGuid, "CODE_SIGN_ENTITLEMENTS", entitlementsXCodePath);
+                    pbxProject.SetBuildProperty(targetGuid, "CODE_SIGN_ENTITLEMENTS", entitlementsXCodePath);
+// MIGHTY_EDIT_END
 
                     LogDevelopmentMessage("OnPostProcessBuild", $"Writing changes to PBXProject {pbxProjectPath}");
                     pbxProject.WriteToFile(pbxProjectPath);
